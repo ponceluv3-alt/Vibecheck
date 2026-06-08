@@ -290,7 +290,7 @@ function App(){
   const [norm,setNorm]=useState(null);
   const [arch,setArch]=useState(null);
   const [apiKey,setApiKey]=useState(localStorage.getItem("vck")||"");
-  const [showKey,setShowKey]=useState(!localStorage.getItem("vck"));
+  const [showKey,setShowKey]=useState(false);
 
   function saveKey(k){setApiKey(k);localStorage.setItem("vck",k);setShowKey(false);}
   function onQuizDone(n,a){setNorm(n);setArch(a);setPage("profile");}
