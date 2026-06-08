@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; connect-src *;">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>vibecheck — find your work vibe</title>
@@ -87,14 +86,14 @@ function computeScores(answers){
 
 async function fetchNarrative(arch,norm,apiKey){
   const dims=Object.entries(norm).map(([k,v])=>k+": "+Math.round(v*100)+"/100").join(", ");
-  const prompt='You are writing a personalized work-style narrative for someone who just completed a culture index quiz. Their archetype is "'+arch.name+'" ('+arch.tag+'). Their dimension scores: '+dims+'. Write 2 short sentences (no headers, no bullets) that feel personal, warm, and direct. Second person. Under 80 words total. Be concise.';
-  const res=await fetch("/api/generate",{
+  const prompt='You are writing a personalized work-style narrative for someone who just completed a culture index quiz. Their archetype is "'+arch.name+'" ('+arch.tag+'). Their dimension scores: '+dims+'. Write 3 paragraphs (no headers, no bullets) that feel personal, warm, and direct. Second person. Under 200 words total.';
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
     method:"POST",
     headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01"},
-    body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1000,messages:[{role:"user",content:prompt}]}),
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]}),
   });
   const data=await res.json();
-  return data.content&&data.content[0]?data.content[0].text:"error: "+JSON.stringify(data);
+  return data.content&&data.content[0]?data.content[0].text:"";
 }
 
 function DimBars({norm,color}){
@@ -185,10 +184,10 @@ function Profile({arch,norm,apiKey}){
   useEffect(()=>{
     if(!nameSet)return;
     setLoading(true);
-   fetchNarrative(arch,norm,apiKey)
-  .then(t=>{setNarrative(t);setLoading(false);})
-  .catch((e)=>{setError("Error: "+e.message);setLoading(false);});
-},[nameSet]);
+    fetchNarrative(arch,norm,apiKey)
+      .then(t=>{setNarrative(t);setLoading(false);})
+      .catch(()=>{setError("Couldn't generate narrative. Try again.");setLoading(false);});
+  },[nameSet]);
 
   useEffect(()=>{
     if(!loading)return;
