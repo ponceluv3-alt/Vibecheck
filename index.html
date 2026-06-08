@@ -94,7 +94,7 @@ async function fetchNarrative(arch,norm,apiKey){
     body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]}),
   });
   const data=await res.json();
-  return data.content&&data.content[0]?data.content[0].text:"";
+  return data.content&&data.content[0]?data.content[0].text:"error: "+JSON.stringify(data);
 }
 
 function DimBars({norm,color}){
