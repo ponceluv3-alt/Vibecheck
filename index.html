@@ -88,7 +88,7 @@ function computeScores(answers){
 async function fetchNarrative(arch,norm,apiKey){
   const dims=Object.entries(norm).map(([k,v])=>k+": "+Math.round(v*100)+"/100").join(", ");
   const prompt='You are writing a personalized work-style narrative for someone who just completed a culture index quiz. Their archetype is "'+arch.name+'" ('+arch.tag+'). Their dimension scores: '+dims+'. Write 2 short sentences (no headers, no bullets) that feel personal, warm, and direct. Second person. Under 80 words total. Be concise.';
-  const res=await fetch("https:///api/generate",{
+  const res=await fetch("/api/generate",{
     method:"POST",
     headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01"},
     body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]}),
