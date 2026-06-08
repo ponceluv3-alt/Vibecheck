@@ -185,10 +185,10 @@ function Profile({arch,norm,apiKey}){
   useEffect(()=>{
     if(!nameSet)return;
     setLoading(true);
-    fetchNarrative(arch,norm,apiKey)
-      .then(t=>{setNarrative(t);setLoading(false);})
-      .then(t=>{console.log("GOT:",t);setNarrative(t);setLoading(false);}) .catch((e)=>{setError("Error: "+e.message);setLoading(false);});
-  },[nameSet]);
+   fetchNarrative(arch,norm,apiKey)
+  .then(t=>{setNarrative(t);setLoading(false);})
+  .catch((e)=>{setError("Error: "+e.message);setLoading(false);});
+},[nameSet]);
 
   useEffect(()=>{
     if(!loading)return;
