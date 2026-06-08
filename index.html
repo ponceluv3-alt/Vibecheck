@@ -363,7 +363,7 @@ function App(){
   const [showKey,setShowKey]=useState(false);
 
   function saveKey(k){setApiKey(k);localStorage.setItem("vck",k);setShowKey(false);}
-  function onQuizDone(n,a){setNorm(n);setArch(a);setPage("profile");}
+  function onQuizDone(n,a){setNorm(n);setArch(a);setPage("profile");saveQuizResponse(n,Math.round((Object.values(n).reduce((a,b)=>a+b,0)/Object.values(n).length)*100));}
 
   const navItems=[{id:"home",label:"home"},{id:"quiz",label:"vibe check"},...(norm?[{id:"profile",label:"my profile"}]:[]),{id:"employer",label:"for employers"}];
 
