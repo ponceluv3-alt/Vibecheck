@@ -21,6 +21,76 @@ body { font-family: 'DM Sans', sans-serif; background: #F7F6FF; color: #1A1A2E; 
 <body>
 <div id="root"></div>
 <script type="text/babel">
+  // === VIBECHECK B2B: Read employer branding from URL ===
+const SUPABASE_URL = 'https://lytxotumvtgsoiiwhgus.supabase.co/rest/v1/';
+const SUPABASE_KEY = 'sb_publishable_4kf9tguYOorBO1JjD4Bp-A_zEfyDbdu';
+
+async function loadEmployerBranding() {
+  const params = new URLSearchParams(window.location.search);
+  const companySlug = params.get('company');
+  const jobSlug = params.get('job');
+  if (!companySlug || !jobSlug) return null;
+  try {
+    const companyRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/companies?slug=eq.${companySlug}&select=*`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const companies = await companyRes.json();
+    if (!companies.length) return null;
+    const company = companies[0];
+    const jobRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/job_postings?slug=eq.${jobSlug}&company_id=eq.${company.id}&select=*`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const jobs = await jobRes.json();
+    return { company, job: jobs[0] || null };
+  } catch (e) {
+    console.error('Branding load failed:', e);
+    return null;
+  }
+}
+
+async function saveQuizResponse(scores, fitScore) {
+  const params = new URLSearchParams(window.location.search);
+  const companySlug = params.get('company');
+  const jobSlug = params.get('job');
+  if (!companySlug || !jobSlug) return;
+  const candidateName = params.get('name') || 'Anonymous';
+  const candidateEmail = params.get('email') || null;
+  try {
+    const companyRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/companies?slug=eq.${companySlug}&select=id`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const companies = await companyRes.json();
+    if (!companies.length) return;
+    const jobRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/job_postings?slug=eq.${jobSlug}&company_id=eq.${companies[0].id}&select=id`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const jobs = await jobRes.json();
+    if (!jobs.length) return;
+    await fetch(`${SUPABASE_URL}/rest/v1/quiz_responses`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        job_id: jobs[0].id,
+        candidate_name: candidateName,
+        candidate_email: candidateEmail,
+        scores: scores,
+        fit_score: fitScore
+      })
+    });
+  } catch (e) {
+    console.error('Save response failed:', e);
+  }
+}
+// === END B2B CODE ===
 const { useState, useEffect } = React;
 
 const BRAND="#6C5CE7",CORAL="#E17055",TEAL="#00B894",ROSE="#E84393",INK="#1A1A2E",INK_MID="#4A4A6A",INK_LIGHT="#8888AA",BG="#F7F6FF",BORDER="rgba(108,92,231,0.15)",DANGER="#D63031",AMBER="#FDCB6E";
