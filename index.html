@@ -187,7 +187,7 @@ function Profile({arch,norm,apiKey}){
     setLoading(true);
     fetchNarrative(arch,norm,apiKey)
       .then(t=>{setNarrative(t);setLoading(false);})
-      .catch(()=>{setError("Couldn't generate narrative. Try again.");setLoading(false);});
+      .then(t=>{console.log("GOT:",t);setNarrative(t);setLoading(false);}) .catch((e)=>{setError("Error: "+e.message);setLoading(false);});
   },[nameSet]);
 
   useEffect(()=>{
