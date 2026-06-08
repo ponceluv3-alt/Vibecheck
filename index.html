@@ -91,7 +91,7 @@ async function fetchNarrative(arch,norm,apiKey){
   const res=await fetch("/api/generate",{
     method:"POST",
     headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01"},
-    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]}),
+    body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1000,messages:[{role:"user",content:prompt}]}),
   });
   const data=await res.json();
   return data.content&&data.content[0]?data.content[0].text:"error: "+JSON.stringify(data);
